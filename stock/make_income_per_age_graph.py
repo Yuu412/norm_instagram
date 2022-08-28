@@ -1,5 +1,6 @@
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
+from pptx.chart.data import XyChartData
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 import math
 import pandas as pd
@@ -9,7 +10,7 @@ from pdf2image import convert_from_path
 
 # path
 LIBRE_PATH = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
-PPT_TEMPLETE_PATH = "../../const/stability_profitability_growth.pptm"
+PPT_TEMPLETE_PATH = "../../const/ゴム.pptm"
 INPUT_PATH = '../../input'
 OUTPUT_PATH = "../../output/"
 
@@ -32,13 +33,13 @@ def PPT2PDF(output_path):
         subprocess.run(command)
 
 def PDF2PNG(output_path):
-    pdf_path = output_path + '/stability_profitability_growth.pdf'
+    pdf_path = output_path + '/ゴム.pdf'
     # pdfから画像に変換
     page = convert_from_path(str(pdf_path), dpi=200, fmt='png')[0]
-    page.save(output_path + '/stability_profitability_growth.png', "PNG")
+    page.save(output_path + '/ゴム.png', "PNG")
 
 def delete_PDF(output_path):
-    pdf_path = output_path + '/stability_profitability_growth.pdf'
+    pdf_path = output_path + '/ゴム.pdf'
     os.remove(pdf_path)
 
 def calc_y_range(taple):
@@ -57,16 +58,21 @@ def calc_y_range(taple):
     }
     return dic_range
 
-
 def replace_graph_data(c_data, score_tuple):
     # テンプレートから要素の配列を取得
     shapes = PRS.slides[0].shapes
     
     #グラフの要素を取得
     graph_shape = shapes[0]
-    
+    print(graph_shape)
+
     # グラフのデータを置き換え
     graph_shape.chart.replace_data(c_data)
+    print('done--------------------------------')
+
+    # テンプレートの保存
+    PRS.save(PPT_TEMPLETE_PATH)
+    exit()
 
     # グラフのY軸の最大値・最小値を設定
     dic_range = calc_y_range(score_tuple)
@@ -108,16 +114,25 @@ for industry_csv in indestry_csv_list:
                 company[label_list[2]],
             )
             
+            chart_data = XyChartData()
+            cd = chart_data.add_series('平均年齢・平均年収', number_format= None)
+            for x, y in list(zip([30,31,42,53,44,55], [410,522,933,838,740,643])):
+                cd.add_data_point(x, y, number_format=None)
+
+            replace_graph_data(chart_data, score_tuple)
+
+            exit()
+
             c_data = CategoryChartData()
             c_data.categories = GRAPH_LABEL_LIST
             c_data.add_series('X', score_tuple)
-
             replace_graph_data(c_data, score_tuple)
+
 
             PPT2PDF(output_path)
             PDF2PNG(output_path)
             delete_PDF(output_path)
             os.rename(
-                output_path + '/stability_profitability_growth.png',
+                output_path + '/ゴム.png',
                 output_path + '/' + label_name + '.png'
             )

@@ -64,6 +64,8 @@ def replace_graph_data(c_data, score_tuple):
     
     #グラフの要素を取得
     graph_shape = shapes[0]
+    print(graph_shape)
+    exit()
     
     # グラフのデータを置き換え
     graph_shape.chart.replace_data(c_data)

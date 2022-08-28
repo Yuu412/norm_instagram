@@ -39,10 +39,11 @@ df_standard_deviation = pd.read_csv(OUTPUT_PAHT + 'standard_deviation.csv', enco
 indestry_csv_list = os.listdir(INPUT_PATH)
 for industry_csv in indestry_csv_list:
     industry = industry_csv.replace('.csv', '')
-    print(industry + ': START!!')
 
     if(industry == '.DS_Store'):
         continue
+
+    print(industry + ': START!!')
 
     industry_path = OUTPUT_PAHT + industry
 
